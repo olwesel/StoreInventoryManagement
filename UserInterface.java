@@ -18,10 +18,13 @@ public class UserInterface {
 
         while (!exit) {
             try {
-                System.out.println("\nInventory and Order Management System:");
-                System.out.println("1. Manage inventory");
-                System.out.println("2. Manage orders");
-                System.out.println("3. Save and quit");
+                System.out.println();
+                System.out.println("Inventory and Order Management System:");
+                System.out.println();
+                System.out.println("(1) Manage inventory");
+                System.out.println("(2) Manage orders");
+                System.out.println("(3) Save and quit");
+                System.out.println();
                 System.out.print("Choose an option: ");
 
                 int choice = getIntInput(scanner);
@@ -55,35 +58,43 @@ public class UserInterface {
 
     private static void manageInventory(Scanner scanner) {
         try {
-            System.out.println("INVENTORY:");
+            System.out.println();
             printInventory();
 
+            System.out.println();
             System.out.println("OPTIONS:");
             System.out.println("(1) Add a new product");
             System.out.println("(2) Remove a product");
             System.out.println("(3) Add stock");
             System.out.println("(4) Remove stock");
             System.out.println("(5) Back to main menu");
+            System.out.println();
+            System.out.print("Choose an option: ");
 
             int choice = getIntInput(scanner);
 
             switch (choice) {
                 case 1:
                     addNewProduct(scanner);
+                    manageInventory(scanner);
                     break;
                 case 2:
                     removeProduct(scanner);
+                    manageInventory(scanner);
                     break;
                 case 3:
                     addStock(scanner);
+                    manageInventory(scanner);
                     break;
                 case 4:
                     removeStock(scanner);
+                    manageInventory(scanner);
                     break;
                 case 5:
                     return;
                 default:
                     System.out.println("Invalid choice. Please try again.");
+                    manageInventory(scanner);
             }
         } catch (Exception e) {
             System.err.println("An error occurred while managing inventory: " + e.getMessage());
@@ -93,31 +104,37 @@ public class UserInterface {
 
     private static void manageOrders(Scanner scanner) {
         try {
-            System.out.println("ORDERS:");
+            System.out.println();
             printOrders();
-
+            System.out.println();
             System.out.println("OPTIONS:");
             System.out.println("(1) Create a new order");
             System.out.println("(2) Finalize an order");
             System.out.println("(3) Modify an existing order");
             System.out.println("(4) Back to main menu");
+            System.out.println();
+            System.out.print("Choose an option: ");
 
             int choice = getIntInput(scanner);
 
             switch (choice) {
                 case 1:
                     createNewOrder(scanner);
+                    manageOrders(scanner);
                     break;
                 case 2:
                     finalizeOrder(scanner);
+                    manageOrders(scanner);
                     break;
                 case 3:
                     modifyOrder(scanner);
+                    manageOrders(scanner);
                     break;
                 case 4:
                     return;
                 default:
                     System.out.println("Invalid choice. Please try again.");
+                    manageOrders(scanner);
             }
         } catch (Exception e) {
             System.err.println("An error occurred while managing orders: " + e.getMessage());
@@ -127,6 +144,9 @@ public class UserInterface {
 
     private static void addNewProduct(Scanner scanner) {
         try {
+            System.out.println();
+            System.out.println("Add a new product:");
+            System.out.println();
             System.out.print("Enter Product Name: ");
             scanner.nextLine();
             String name = scanner.nextLine();
@@ -145,6 +165,9 @@ public class UserInterface {
 
     private static void removeProduct(Scanner scanner) {
         try {
+            System.out.println();
+            System.out.println("Remove a product:");
+            System.out.println();
             System.out.print("Enter Product ID to remove: ");
             int productId = getIntInput(scanner);
 
@@ -157,6 +180,9 @@ public class UserInterface {
 
     private static void addStock(Scanner scanner) {
         try {
+            System.out.println();
+            System.out.println("Add stock:");
+            System.out.println();
             System.out.print("Enter Product ID to add stock: ");
             int productId = getIntInput(scanner);
             Product product = InventoryManager.findProductById(productId);
@@ -179,6 +205,9 @@ public class UserInterface {
 
     private static void removeStock(Scanner scanner) {
         try {
+            System.out.println();
+            System.out.println("Remove stock:");
+            System.out.println();
             System.out.print("Enter Product ID to remove stock: ");
             int productId = getIntInput(scanner);
             Product product = InventoryManager.findProductById(productId);
@@ -189,7 +218,7 @@ public class UserInterface {
                 if (product.updateProductStock(-quantity)) {
                     System.out.println("Stock removed successfully.");
                 } else {
-                    System.out.println("Not enough stock to remove that quantity.");
+                    System.out.println("UNSUCCESSFUL: Not enough stock to remove that quantity.");
                 }
             } else {
                 System.out.println("Product not found.");
@@ -201,6 +230,10 @@ public class UserInterface {
 
     private static void createNewOrder(Scanner scanner) {
         try {
+            System.out.println();
+            System.out.println("Note: You may create a new pending order with stock quantity that is not in inventory, however to finalize it, the inventory must be available.");
+            System.out.println("Create a new order:");
+            System.out.println();
             Order newOrder = OrderManager.createOrder();
             addProductsToOrder(scanner, newOrder);
         } catch (Exception e) {
@@ -210,6 +243,9 @@ public class UserInterface {
 
     private static void modifyOrder(Scanner scanner) {
         try {
+            System.out.println();
+            System.out.println("Modify an existing order:");
+            System.out.println();
             System.out.print("Enter Order ID to modify: ");
             int orderId = getIntInput(scanner);
             Order order = OrderManager.findOrderById(orderId);
@@ -259,9 +295,12 @@ public class UserInterface {
 
     private static void addProductsToOrder(Scanner scanner, Order order) {
         boolean addingProducts = true;
+        printInventory();
 
         while (addingProducts) {
-            printInventory(); // Show the list of all products
+            System.out.println();
+            System.out.println("Add a product to the order:");
+            System.out.println();
             System.out.print("Enter Product ID: ");
             int productId = getIntInput(scanner);
             Product product = InventoryManager.findProductById(productId);
@@ -275,9 +314,9 @@ public class UserInterface {
                 System.out.println("Product not found. Please try again.");
             }
 
-            System.out.print("Add more products? (yes/no): ");
+            System.out.print("Add more products? (yes/any key to exit): ");
             String more = scanner.next();
-            if (!more.equalsIgnoreCase("yes")) {
+            if (!more.equalsIgnoreCase("yes") && !more.equalsIgnoreCase("y") ) {
                 addingProducts = false;
             }
         }
@@ -285,6 +324,9 @@ public class UserInterface {
 
     private static void removeProductFromOrder(Scanner scanner, Order order) {
         try {
+            System.out.println();
+            System.out.println("Remove product from order:");
+            System.out.println();
             System.out.print("Enter Product ID to remove from order: ");
             int productId = getIntInput(scanner);
             Product product = InventoryManager.findProductById(productId);
@@ -301,6 +343,9 @@ public class UserInterface {
 
     private static void changeProductQuantity(Scanner scanner, Order order) {
         try {
+            System.out.println();
+            System.out.println("Change product quantity:");
+            System.out.println();
             System.out.print("Enter Product ID to change quantity: ");
             int productId = getIntInput(scanner);
             Product product = InventoryManager.findProductById(productId);
@@ -319,6 +364,9 @@ public class UserInterface {
 
     private static void finalizeOrder(Scanner scanner) {
         try {
+            System.out.println();
+            System.out.println("Finalize an order:");
+            System.out.println();
             System.out.print("Enter Order ID to finalize: ");
             int orderId = getIntInput(scanner);
             Order order = OrderManager.findOrderById(orderId);
@@ -328,7 +376,7 @@ public class UserInterface {
                 if (finalized) {
                     System.out.println("Order finalized successfully.");
                 } else {
-                    System.out.println("Order remains pending due to insufficient stock.");
+                    System.out.println("ORDER REMAINS PENDING DUE TO INSUFFICIENT STOCK.");
                 }
             } else if (order == null) {
                 System.out.println("Order not found.");
@@ -342,6 +390,7 @@ public class UserInterface {
 
     private static void printInventory() {
         try {
+            System.out.println("CURRENT INVENTORY (remember to save and quit!):");
             Map<Integer, Product> products = InventoryManager.getProducts();
             if (products.isEmpty()) {
                 System.out.println("No products available.");
@@ -357,6 +406,7 @@ public class UserInterface {
 
     private static void printOrders() {
         try {
+            System.out.println("CURRENT ORDERS (remember to save and quit!):");
             Map<Integer, Order> orders = OrderManager.getOrders();
             if (orders.isEmpty()) {
                 System.out.println("No orders available.");
