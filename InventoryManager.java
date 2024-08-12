@@ -4,24 +4,30 @@ import java.util.Map;
 
 public class InventoryManager {
     private static final String FILE_NAME = "inventory.txt";
-    private static InventoryManager instance; // Singleton instance
-    private Map<Integer, Product> products = new HashMap<>();
-    private int nextProductId = 1;
+    private static volatile InventoryManager instance; // Volatile for thread-safe lazy initialization
+    private final Map<Integer, Product> products; // Encapsulated with final keyword
+    private int nextProductId; // Encapsulated
 
     // Private constructor to prevent instantiation from outside the class
     private InventoryManager() {
+        this.products = new HashMap<>();
+        this.nextProductId = 1;
         loadProductsFromFile();
     }
 
-    // Public method to provide access to the singleton instance
-    public static synchronized InventoryManager getInstance() {
+    // Double-checked locking for thread-safe lazy initialization
+    public static InventoryManager getInstance() {
         if (instance == null) {
-            instance = new InventoryManager();
+            synchronized (InventoryManager.class) {
+                if (instance == null) {
+                    instance = new InventoryManager();
+                }
+            }
         }
         return instance;
     }
 
-    public  void loadProductsFromFile() {
+    private void loadProductsFromFile() {
         File file = new File(FILE_NAME);
 
         if (!file.exists()) {
@@ -85,7 +91,7 @@ public class InventoryManager {
     }
 
     public Map<Integer, Product> getProducts() {
-        return products;
+        return new HashMap<>(products); // Return a copy to prevent external modification
     }
 }
 

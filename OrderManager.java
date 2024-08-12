@@ -4,24 +4,30 @@ import java.util.Map;
 
 public class OrderManager {
     private static final String FILE_NAME = "orders.txt";
-    private static OrderManager instance; // Singleton instance
-    private Map<Integer, Order> orders = new HashMap<>();
-    private int nextOrderId = 1;
+    private static volatile OrderManager instance; // for thread-safe lazy initialization
+    private final Map<Integer, Order> orders; // Encapsulated with final keyword
+    private int nextOrderId; // Encapsulated
 
     // Private constructor to prevent instantiation from outside the class
     private OrderManager() {
+        this.orders = new HashMap<>();
+        this.nextOrderId = 1;
         loadOrdersFromFile();
     }
 
-    // Public method to provide access to the singleton instance
-    public static synchronized OrderManager getInstance() {
+    // Double-checked locking for thread-safe lazy initialization
+    public static OrderManager getInstance() {
         if (instance == null) {
-            instance = new OrderManager();
+            synchronized (OrderManager.class) {
+                if (instance == null) {
+                    instance = new OrderManager();
+                }
+            }
         }
         return instance;
     }
 
-    public  void loadOrdersFromFile() {
+    private void loadOrdersFromFile() {
         File file = new File(FILE_NAME);
         if (!file.exists()) {
             try {
@@ -42,8 +48,8 @@ public class OrderManager {
                     double totalPrice = Double.parseDouble(parts[1]);
                     String status = parts[2];
                     Order order = new Order(orderId);
-                    
-                    // Assuming Order class has a method to set its total price and status
+
+                    // Assuming Order class has methods to set its total price and status
                     order.setTotalPrice(totalPrice);
                     order.setStatus(status);
 
@@ -84,6 +90,7 @@ public class OrderManager {
     }
 
     public Map<Integer, Order> getOrders() {
-        return orders;
+        return new HashMap<>(orders); // Returning copy to prevent external modifications
     }
 }
+

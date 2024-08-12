@@ -2,8 +2,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Order {
-    private int orderId;
-    private Map<Integer, Integer> products; // Maps productId to quantity
+    private final int orderId; // Final to prevent changes after creation
+    private final Map<Integer, Integer> products; // Maps productId to quantity
     private double totalPrice;
     private String status; // "Pending" or "Finalized"
 
@@ -13,15 +13,8 @@ public class Order {
         this.totalPrice = 0.0;
         this.status = "Pending";
     }
-        // Setters
-        public void setTotalPrice(double totalPrice) {
-            this.totalPrice = totalPrice;
-        }
-    
-        public void setStatus(String status) {
-            this.status = status;
-        }
 
+    // Getters and Setters
     public int getOrderId() {
         return orderId;
     }
@@ -30,14 +23,23 @@ public class Order {
         return totalPrice;
     }
 
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
     public String getStatus() {
         return status;
     }
 
-    public Map<Integer, Integer> getProducts() {
-        return products;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
+    public Map<Integer, Integer> getProducts() {
+        return new HashMap<>(products); // Return a copy to prevent external modification
+    }
+
+    // Methods
     public void addProduct(Product product, int quantity) {
         int currentQuantity = products.getOrDefault(product.getProductId(), 0);
         products.put(product.getProductId(), currentQuantity + quantity);
@@ -46,9 +48,8 @@ public class Order {
 
     public void removeProduct(Product product) {
         if (products.containsKey(product.getProductId())) {
-            int quantity = products.get(product.getProductId());
+            int quantity = products.remove(product.getProductId());
             totalPrice -= product.getPrice() * quantity;
-            products.remove(product.getProductId());
             System.out.println("Product removed from the order.");
         } else {
             System.out.println("Product not found in the order.");
@@ -84,6 +85,5 @@ public class Order {
         System.out.println("Order finalized successfully.");
         return true;
     }
-
-
 }
+
