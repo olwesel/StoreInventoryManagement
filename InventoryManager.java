@@ -4,10 +4,24 @@ import java.util.Map;
 
 public class InventoryManager {
     private static final String FILE_NAME = "inventory.txt";
-    private static Map<Integer, Product> products = new HashMap<>();
-    private static int nextProductId = 1;
+    private static InventoryManager instance; // Singleton instance
+    private Map<Integer, Product> products = new HashMap<>();
+    private int nextProductId = 1;
 
-    public static Map<Integer, Product> loadProductsFromFile() {
+    // Private constructor to prevent instantiation from outside the class
+    private InventoryManager() {
+        loadProductsFromFile();
+    }
+
+    // Public method to provide access to the singleton instance
+    public static synchronized InventoryManager getInstance() {
+        if (instance == null) {
+            instance = new InventoryManager();
+        }
+        return instance;
+    }
+
+    public  void loadProductsFromFile() {
         File file = new File(FILE_NAME);
 
         if (!file.exists()) {
@@ -38,10 +52,9 @@ public class InventoryManager {
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
         }
-        return products;
     }
 
-    public static void saveProductsToFile() {
+    public void saveProductsToFile() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_NAME))) {
             for (Product product : products.values()) {
                 bw.write(product.getProductId() + "," + product.getName() + "," + product.getPrice() + "," + product.getStockQuantity());
@@ -52,13 +65,13 @@ public class InventoryManager {
         }
     }
 
-    public static void addProduct(String name, double price, int stockQuantity) {
+    public void addProduct(String name, double price, int stockQuantity) {
         int productId = nextProductId++;
         products.put(productId, new Product(productId, name, price, stockQuantity));
         System.out.println("Product added successfully with ID: " + productId);
     }
 
-    public static void removeProduct(int productId) {
+    public void removeProduct(int productId) {
         if (products.containsKey(productId)) {
             products.remove(productId);
             System.out.println("Product removed successfully.");
@@ -67,11 +80,12 @@ public class InventoryManager {
         }
     }
 
-    public static Product findProductById(int productId) {
+    public Product findProductById(int productId) {
         return products.get(productId);
     }
 
-    public static Map<Integer, Product> getProducts() {
+    public Map<Integer, Product> getProducts() {
         return products;
     }
 }
+

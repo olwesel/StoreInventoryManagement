@@ -3,16 +3,24 @@ import java.util.Map;
 
 public class Order {
     private int orderId;
+    private Map<Integer, Integer> products; // Maps productId to quantity
     private double totalPrice;
     private String status; // "Pending" or "Finalized"
-    private Map<Integer, Integer> products; // Maps productId to quantity
 
     public Order(int orderId) {
         this.orderId = orderId;
+        this.products = new HashMap<>();
         this.totalPrice = 0.0;
         this.status = "Pending";
-        this.products = new HashMap<>();
     }
+        // Setters
+        public void setTotalPrice(double totalPrice) {
+            this.totalPrice = totalPrice;
+        }
+    
+        public void setStatus(String status) {
+            this.status = status;
+        }
 
     public int getOrderId() {
         return orderId;
@@ -38,8 +46,9 @@ public class Order {
 
     public void removeProduct(Product product) {
         if (products.containsKey(product.getProductId())) {
-            int quantity = products.remove(product.getProductId());
+            int quantity = products.get(product.getProductId());
             totalPrice -= product.getPrice() * quantity;
+            products.remove(product.getProductId());
             System.out.println("Product removed from the order.");
         } else {
             System.out.println("Product not found in the order.");
@@ -72,7 +81,9 @@ public class Order {
         }
 
         this.status = "Finalized";
-        System.out.println("Order finalized.");
+        System.out.println("Order finalized successfully.");
         return true;
     }
+
+
 }
