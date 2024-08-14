@@ -70,7 +70,11 @@ public class Order {
     public boolean finalizeOrder(Map<Integer, Product> inventory) {
         for (Map.Entry<Integer, Integer> entry : products.entrySet()) {
             Product product = inventory.get(entry.getKey());
-            if (product == null || product.getStockQuantity() < entry.getValue()) {
+            if (product == null) {
+                System.out.println("The product with key: " + entry.getKey() + " no longer exists in inventory.");
+                return false;
+            }
+            if (product.getStockQuantity() < entry.getValue()) {
                 System.out.println("Not enough stock for product: " + product.getName() + ".");
                 return false;
             }

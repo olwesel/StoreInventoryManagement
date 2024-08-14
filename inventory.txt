@@ -1,2 +1,7 @@
-1,dsa,34.0,32
-2,wsdaff,234.0,233
+2,Balloons,5.0,20
+3,Pencil Case,7.0,6
+4,Hairbrush,12.0,14
+5,World's Best Grandpa Mug,14.0,10
+6,City's Best Grandpa Mug,8.0,20
+8,Plain White T-Shirt,5.0,38
+9,Not Plain White T-Shirt,4.0,50

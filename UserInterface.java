@@ -171,7 +171,10 @@ public class UserInterface {
             System.out.println();
             System.out.print("Enter Product ID to remove: ");
             int productId = getIntInput(scanner);
-
+            if (OrderManager.getInstance().checkForProduct(productId)) {
+                System.out.println("Cannot remove product, it is part of a pending order.");
+                return;
+            } // checks if product is in any orders, returns boolean
             InventoryManager.getInstance().removeProduct(productId);
         } catch (Exception e) {
             System.err.println("An error occurred while removing the product: " + e.getMessage());
@@ -441,9 +444,13 @@ public class UserInterface {
     private static double getDoubleInput(Scanner scanner) {
         while (true) {
             try {
-                return scanner.nextDouble();
+                double doub = scanner.nextDouble();
+                if (doub < 0) {
+                    throw new InputMismatchException("Negative numbers are not allowed.");
+                }
+                return doub;
             } catch (InputMismatchException e) {
-                System.out.println("Invalid input. Please enter a number.");
+                System.out.println("Invalid input. Please enter a non-negative number.");
                 scanner.nextLine(); // Clear scanner buffer
             }
         }

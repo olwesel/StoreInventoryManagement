@@ -1,8 +1,10 @@
+
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
 public class OrderManager {
+
     private static final String FILE_NAME = "orders.txt";
     private static volatile OrderManager instance; // for thread-safe lazy initialization
     private final Map<Integer, Order> orders; // Encapsulated with final keyword
@@ -46,22 +48,25 @@ public class OrderManager {
                     InventoryManager manager = InventoryManager.getInstance();
                     String[] parts = line.split(",");
                     int orderId = Integer.parseInt(parts[0]);
-                    double totalPrice = Double.parseDouble(parts[1]);
+                    // double totalPrice = Double.parseDouble(parts[1]);
                     String status = parts[2];
                     Order order = new Order(orderId);
-                    String[] productStrings = parts[3].substring(1, parts[3].length() - 2).split(",");
-
-                    // add products to order
-                    for (String productString : productStrings) {
-                        String[] subParts = productString.split("-");
-                        int productInt = Integer.parseInt(subParts[0]);
-                        int quantity = Integer.parseInt(subParts[1]);
-                        Product product = manager.findProductById(productInt);
-                        order.addProduct(product, quantity);
+                    if (parts[3].length() > 2) {
+                        String[] productStrings = parts[3].substring(1, parts[3].length() - 1).split(";");
+                        // add products to order
+                        for (String productString : productStrings) {
+                            String[] subParts = productString.split("-");
+                            int productInt = Integer.parseInt(subParts[0]);
+                            int quantity = Integer.parseInt(subParts[1]);
+                            Product product = manager.findProductById(productInt);
+                            if (product == null) {
+                                System.out.println("Notice: Product with id " + productInt + ", quantity " + quantity + " in order with id " + orderId + " is missing from current inventory. Deleting product from order to prevent program errors.");
+                            } else {
+                                order.addProduct(product, quantity);
+                                order.setTotalPrice(order.getTotalPrice() + product.getPrice());
+                            }
+                        }
                     }
-
-                    // Assuming Order class has methods to set its total price and status
-                    order.setTotalPrice(totalPrice);
                     order.setStatus(status);
 
                     if ("Finalized".equals(status)) {
@@ -69,7 +74,6 @@ public class OrderManager {
                     }
 
                     orders.put(orderId, order);
-                    System.out.println(order);
                     nextOrderId = Math.max(nextOrderId, orderId + 1);
                 } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                     System.err.println("Error parsing order data: " + line + " - " + e.getMessage());
@@ -77,6 +81,8 @@ public class OrderManager {
             }
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Unexpected error: " + e.getMessage());
         }
     }
 
@@ -88,12 +94,11 @@ public class OrderManager {
                 Map<Integer, Integer> products = order.getProducts();
                 for (int id : products.keySet()) {
                     int quantity = products.get(id);
-                    productsString += id + "-" + quantity + ",";
+                    productsString += id + "-" + quantity + ";";
                 }
                 if (productsString.length() > 1) {
                     productsString = productsString.substring(0, productsString.length() - 1) + ")";
-                }
-                else {
+                } else {
                     productsString += ")";
                 }
                 bw.write(order.getOrderId() + "," + order.getTotalPrice() + "," + order.getStatus() + "," + productsString);
@@ -117,5 +122,16 @@ public class OrderManager {
     public Map<Integer, Order> getOrders() {
         return new HashMap<>(orders); // Returning copy to prevent external modifications
     }
-}
 
+    // checks if a product id is in a pending order
+    public boolean checkForProduct(int productId) {
+        for (Order order : orders.values()) {
+            if (!order.getStatus().equals("Finalized")) {
+                if (order.getProducts().containsKey(productId)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+}

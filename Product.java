@@ -43,6 +43,9 @@ public class Product {
     }
 
     public void setPrice(double price) {
+        if (price < 0) {
+            return;
+        }
         this.price = price;
     }
 
