@@ -173,7 +173,6 @@ public class UserInterface {
             int productId = getIntInput(scanner);
 
             InventoryManager.getInstance().removeProduct(productId);
-            System.out.println("Product removed successfully.");
         } catch (Exception e) {
             System.err.println("An error occurred while removing the product: " + e.getMessage());
         }
@@ -249,8 +248,9 @@ public class UserInterface {
             System.out.println();
             System.out.print("Enter Order ID to modify: ");
             int orderId = getIntInput(scanner);
+            System.out.println();
             Order order = OrderManager.getInstance().findOrderById(orderId);
-
+            System.out.println(order);
             if (order != null && "Pending".equals(order.getStatus())) {
                 modifyOrderOptions(order);
             } else if (order == null) {
@@ -373,8 +373,9 @@ public class UserInterface {
             System.out.println();
             System.out.print("Enter Order ID to finalize: ");
             int orderId = getIntInput(scanner);
+            System.out.println();
             Order order = OrderManager.getInstance().findOrderById(orderId);
-
+            System.out.println(order);
             if (order != null && "Pending".equals(order.getStatus())) {
                 boolean finalized = order.finalizeOrder(InventoryManager.getInstance().getProducts());
                 if (finalized) {

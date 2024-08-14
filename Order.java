@@ -71,7 +71,7 @@ public class Order {
         for (Map.Entry<Integer, Integer> entry : products.entrySet()) {
             Product product = inventory.get(entry.getKey());
             if (product == null || product.getStockQuantity() < entry.getValue()) {
-                System.out.println("Not enough stock for product: " + product.getName() + ". Order remains pending.");
+                System.out.println("Not enough stock for product: " + product.getName() + ".");
                 return false;
             }
         }
@@ -82,8 +82,26 @@ public class Order {
         }
 
         this.status = "Finalized";
-        System.out.println("Order finalized successfully.");
         return true;
+    }
+
+    // Override toString() method
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Order ID: ").append(orderId).append("\n");
+        sb.append("Status: ").append(status).append("\n");
+        sb.append("Products in Order:\n");
+
+        for (Map.Entry<Integer, Integer> entry : products.entrySet()) {
+            sb.append("Product ID: ").append(entry.getKey())
+              .append(", Quantity: ").append(entry.getValue()).append("\n");
+        }
+
+        sb.append("Total Price: $").append(String.format("%.2f", totalPrice)).append("\n");
+        sb.append("-----------------------------");
+
+        return sb.toString();
     }
 }
 
