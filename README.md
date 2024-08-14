@@ -2,32 +2,32 @@
 
 ## Overview
 
-This project is a command-line-based Inventory and Order Management System designed to allow users to manage products in an inventory and create, modify, and finalize orders. The system handles basic inventory operations like adding new products, updating stock, and removing products, as well as order management operations like creating new orders, modifying existing ones, and finalizing orders.
+This project is a command-line-based Inventory and Order Management System that handles basic inventory operations like adding new products, updating stock, and removing products, as well as order management operations like creating new orders, modifying existing ones, and finalizing orders.
 
 ## Project Structure
 
 The project is structured into several Java classes:
 
-1. **Inventory Management** (`InventoryManager.java`):
+1. **Inventory Management** (`InventoryManager.java`, `Product.java`):
    - Manages the list of products in the inventory.
    - Allows adding new products, removing existing ones, and updating product stock.
    - Loads inventory from `inventory.txt` and saves changes to the file.
+   - A Product object represents a product in the inventory with attributes such as ID, name, price, and stock quantity.
+   - Products can be updated, added, or removed based on inventory operations.
+
 
 2. **Order Management** (`OrderManager.java`, `Order.java`):
    - Manages orders, which can contain multiple products.
    - Supports creating new orders, modifying products in pending orders, and finalizing orders.
+   - An Order object represents an order with attributes such as status, ID, products, and total price. 
    - Orders are stored in `orders.txt` and are loaded and saved to this file during application use.
 
-3. **Product Management** (`Product.java`):
-   - Represents a product in the inventory with attributes such as ID, name, price, and stock quantity.
-   - Products can be updated or removed based on inventory operations.
-
-4. **User Interface** (`UserInterface.java`):
+3. **User Interface** (`UserInterface.java`):
    - Provides the command-line interface for user interaction.
    - Users can manage inventory, create and modify orders, and save their changes.
    - Handles input validation and ensures data integrity.
 
-5. **Data Files**:
+4. **Data Files**:
    - `orders.txt`: Stores the list of orders with their details.
    - `inventory.txt`: Stores the list of products in the inventory.
 
