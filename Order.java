@@ -2,18 +2,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Order {
-    private int orderId;
+    private final int orderId; // Final to prevent changes after creation
+    private final Map<Integer, Integer> products; // Maps productId to quantity
     private double totalPrice;
     private String status; // "Pending" or "Finalized"
-    private Map<Integer, Integer> products; // Maps productId to quantity
 
     public Order(int orderId) {
         this.orderId = orderId;
+        this.products = new HashMap<>();
         this.totalPrice = 0.0;
         this.status = "Pending";
-        this.products = new HashMap<>();
     }
 
+    // Getters and Setters
     public int getOrderId() {
         return orderId;
     }
@@ -22,14 +23,23 @@ public class Order {
         return totalPrice;
     }
 
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
     public String getStatus() {
         return status;
     }
 
-    public Map<Integer, Integer> getProducts() {
-        return products;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
+    public Map<Integer, Integer> getProducts() {
+        return new HashMap<>(products); // Return a copy to prevent external modification
+    }
+
+    // Methods
     public void addProduct(Product product, int quantity) {
         int currentQuantity = products.getOrDefault(product.getProductId(), 0);
         products.put(product.getProductId(), currentQuantity + quantity);
@@ -72,7 +82,8 @@ public class Order {
         }
 
         this.status = "Finalized";
-        System.out.println("Order finalized.");
+        System.out.println("Order finalized successfully.");
         return true;
     }
 }
+

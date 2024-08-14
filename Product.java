@@ -1,5 +1,5 @@
 public class Product {
-    private int productId;
+    private final int productId; // Marked as final since it should not change
     private String name;
     private double price;
     private int stockQuantity;
@@ -25,6 +25,7 @@ public class Product {
         return true;
     }
 
+    // Getters and Setters for encapsulation
     public int getProductId() {
         return productId;
     }
@@ -33,11 +34,21 @@ public class Product {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public double getPrice() {
         return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 
     public int getStockQuantity() {
         return stockQuantity;
     }
+
+    // No setter for productId, as it should be immutable once set
 }

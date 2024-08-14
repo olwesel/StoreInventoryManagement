@@ -4,10 +4,30 @@ import java.util.Map;
 
 public class InventoryManager {
     private static final String FILE_NAME = "inventory.txt";
-    private static Map<Integer, Product> products = new HashMap<>();
-    private static int nextProductId = 1;
+    private static volatile InventoryManager instance; // Volatile for thread-safe lazy initialization
+    private final Map<Integer, Product> products; // Encapsulated with final keyword
+    private int nextProductId; // Encapsulated
 
-    public static Map<Integer, Product> loadProductsFromFile() {
+    // Private constructor to prevent instantiation from outside the class
+    private InventoryManager() {
+        this.products = new HashMap<>();
+        this.nextProductId = 1;
+        loadProductsFromFile();
+    }
+
+    // Double-checked locking for thread-safe lazy initialization
+    public static InventoryManager getInstance() {
+        if (instance == null) {
+            synchronized (InventoryManager.class) {
+                if (instance == null) {
+                    instance = new InventoryManager();
+                }
+            }
+        }
+        return instance;
+    }
+
+    private void loadProductsFromFile() {
         File file = new File(FILE_NAME);
 
         if (!file.exists()) {
@@ -38,10 +58,9 @@ public class InventoryManager {
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
         }
-        return products;
     }
 
-    public static void saveProductsToFile() {
+    public void saveProductsToFile() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_NAME))) {
             for (Product product : products.values()) {
                 bw.write(product.getProductId() + "," + product.getName() + "," + product.getPrice() + "," + product.getStockQuantity());
@@ -52,13 +71,13 @@ public class InventoryManager {
         }
     }
 
-    public static void addProduct(String name, double price, int stockQuantity) {
+    public void addProduct(String name, double price, int stockQuantity) {
         int productId = nextProductId++;
         products.put(productId, new Product(productId, name, price, stockQuantity));
         System.out.println("Product added successfully with ID: " + productId);
     }
 
-    public static void removeProduct(int productId) {
+    public void removeProduct(int productId) {
         if (products.containsKey(productId)) {
             products.remove(productId);
             System.out.println("Product removed successfully.");
@@ -67,11 +86,12 @@ public class InventoryManager {
         }
     }
 
-    public static Product findProductById(int productId) {
+    public Product findProductById(int productId) {
         return products.get(productId);
     }
 
-    public static Map<Integer, Product> getProducts() {
-        return products;
+    public Map<Integer, Product> getProducts() {
+        return new HashMap<>(products); // Return a copy to prevent external modification
     }
 }
+

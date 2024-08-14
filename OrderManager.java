@@ -4,12 +4,31 @@ import java.util.Map;
 
 public class OrderManager {
     private static final String FILE_NAME = "orders.txt";
-    private static Map<Integer, Order> orders = new HashMap<>();
-    private static int nextOrderId = 1;
+    private static volatile OrderManager instance; // for thread-safe lazy initialization
+    private final Map<Integer, Order> orders; // Encapsulated with final keyword
+    private int nextOrderId; // Encapsulated
 
-    public static Map<Integer, Order> loadOrdersFromFile() {
+    // Private constructor to prevent instantiation from outside the class
+    private OrderManager() {
+        this.orders = new HashMap<>();
+        this.nextOrderId = 1;
+        loadOrdersFromFile();
+    }
+
+    // Double-checked locking for thread-safe lazy initialization
+    public static OrderManager getInstance() {
+        if (instance == null) {
+            synchronized (OrderManager.class) {
+                if (instance == null) {
+                    instance = new OrderManager();
+                }
+            }
+        }
+        return instance;
+    }
+
+    private void loadOrdersFromFile() {
         File file = new File(FILE_NAME);
-        Map<Integer, Product> inventory = new HashMap<>();
         if (!file.exists()) {
             try {
                 if (file.createNewFile()) {
@@ -30,8 +49,12 @@ public class OrderManager {
                     String status = parts[2];
                     Order order = new Order(orderId);
 
+                    // Assuming Order class has methods to set its total price and status
+                    order.setTotalPrice(totalPrice);
+                    order.setStatus(status);
+
                     if ("Finalized".equals(status)) {
-                        order.finalizeOrder(inventory); // Pass the inventory map
+                        order.finalizeOrder(InventoryManager.getInstance().getProducts());
                     }
 
                     orders.put(orderId, order);
@@ -43,10 +66,9 @@ public class OrderManager {
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
         }
-        return orders;
     }
 
-    public static void saveOrdersToFile() {
+    public void saveOrdersToFile() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_NAME))) {
             for (Order order : orders.values()) {
                 bw.write(order.getOrderId() + "," + order.getTotalPrice() + "," + order.getStatus());
@@ -57,17 +79,18 @@ public class OrderManager {
         }
     }
 
-    public static Order createOrder() {
+    public Order createOrder() {
         Order newOrder = new Order(nextOrderId++);
         orders.put(newOrder.getOrderId(), newOrder);
         return newOrder;
     }
 
-    public static Order findOrderById(int orderId) {
+    public Order findOrderById(int orderId) {
         return orders.get(orderId);
     }
 
-    public static Map<Integer, Order> getOrders() {
-        return orders;
+    public Map<Integer, Order> getOrders() {
+        return new HashMap<>(orders); // Returning copy to prevent external modifications
     }
 }
+
