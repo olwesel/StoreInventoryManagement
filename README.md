@@ -1,104 +1,263 @@
-#StoreInventoryManagement
+# Inventory and Order Management System
 
-Inventory and Order Management System
+## Overview
 
-Overview
+This project is a command-line-based Inventory and Order Management System designed to allow users to manage products in an inventory and create, modify, and finalize orders. The system handles basic inventory operations like adding new products, updating stock, and removing products, as well as order management operations like creating new orders, modifying existing ones, and finalizing orders.
 
-This project is an Inventory and Order Management System designed to manage products, orders, and user interactions efficiently. It allows users to add, modify, and finalize orders, as well as manage inventory through a command-line interface.
+## Project Structure
 
-Project Structure
-The project is divided into the following main components:
+The project is structured into several Java classes:
 
-Inventory Management (InventoryManager.java):
+1. **Inventory Management** (`InventoryManager.java`):
+   - Manages the list of products in the inventory.
+   - Allows adding new products, removing existing ones, and updating product stock.
+   - Loads inventory from `inventory.txt` and saves changes to the file.
 
-Manages the inventory of products.
-Provides functionality to add, remove, and update products in the inventory.
-Order Management (OrderManager.java, Order.java):
+2. **Order Management** (`OrderManager.java`, `Order.java`):
+   - Manages orders, which can contain multiple products.
+   - Supports creating new orders, modifying products in pending orders, and finalizing orders.
+   - Orders are stored in `orders.txt` and are loaded and saved to this file during application use.
 
-Handles creation and management of orders.
-Supports adding products to orders, modifying quantities, and finalizing orders.
-Orders are stored in orders.txt.
-Product Management (Product.java):
+3. **Product Management** (`Product.java`):
+   - Represents a product in the inventory with attributes such as ID, name, price, and stock quantity.
+   - Products can be updated or removed based on inventory operations.
 
-Represents individual products with attributes like ID, name, price, and stock quantity.
-User Interface (UserInterface.java):
+4. **User Interface** (`UserInterface.java`):
+   - Provides the command-line interface for user interaction.
+   - Users can manage inventory, create and modify orders, and save their changes.
+   - Handles input validation and ensures data integrity.
 
-Provides a command-line interface (CLI) for interacting with the system.
-Handles user inputs for managing inventory and orders.
-Data Files:
+5. **Data Files**:
+   - `orders.txt`: Stores the list of orders with their details.
+   - `inventory.txt`: Stores the list of products in the inventory.
 
-orders.txt: Stores order details.
-inventory.txt: Stores inventory details.
-Features
-Inventory Management:
+## Features
 
-Add, update, and remove products.
-View current inventory.
-Order Management:
+### Inventory Management
 
-Create new orders with multiple products.
-Modify existing orders.
-Finalize orders, which updates the inventory based on the order.
-User-Friendly CLI:
+- **Add a New Product**:
+  - Users can add a new product to the inventory by specifying the product's name, price, and stock quantity.
+  - Example interaction:
+    ```sh
+    OPTIONS:
+    (1) Add a new product
+    (2) Remove a product
+    (3) Add stock
+    (4) Remove stock
+    (5) Back to main menu
 
-Interact with the system using simple commands.
-Input validation to ensure data integrity.
-Setup and Usage
-Prerequisites
-Java Development Kit (JDK) 8 or higher
-A text editor or Integrated Development Environment (IDE) like IntelliJ IDEA, Eclipse, or VS Code.
-Running the Application
-Compile the Project:
+    Choose an option: 1
 
-Open a terminal and navigate to the project directory.
-Compile the Java files:
-sh
-Copy code
-javac *.java
-Run the Application:
+    Add a new product:
 
-Execute the main class (likely within UserInterface.java):
-sh
-Copy code
-java UserInterface
-Interact with the Application:
+    Enter Product Name: City's Best Grandpa Mug
+    Enter Product Price: 8
+    Enter Stock Quantity: 20
+    Product added successfully with ID: 6
+    ```
 
-Follow the on-screen prompts to manage inventory and orders.
-File Formats
-orders.txt:
+- **Remove a Product**:
+  - Users can remove a product from the inventory by specifying the product ID.
+  - Example interaction:
+    ```sh
+    OPTIONS:
+    (1) Add a new product
+    (2) Remove a product
+    (3) Add stock
+    (4) Remove stock
+    (5) Back to main menu
 
-Stores orders in the format: orderId,totalPrice,status,productId-quantity,...
-inventory.txt:
+    Choose an option: 2
 
-Stores inventory in the format: productId,name,price,stockQuantity
-Example Usage
-sh
-Copy code
-Welcome to the Inventory and Order Management System!
+    Remove a product:
 
-Please choose an option:
-1. Manage Inventory
-2. Manage Orders
-3. Exit
+    Enter Product ID to remove: 7
+    Product removed successfully.
+    ```
 
-> 1
-You have selected to manage inventory. What would you like to do?
+- **Add Stock**:
+  - Users can increase the stock quantity of an existing product by specifying the product ID and the amount to add.
+  - Example interaction:
+    ```sh
+    OPTIONS:
+    (1) Add a new product
+    (2) Remove a product
+    (3) Add stock
+    (4) Remove stock
+    (5) Back to main menu
 
-1. Add Product
-2. View Inventory
-3. Update Product
-4. Remove Product
-5. Back to Main Menu
+    Choose an option: 3
 
-> 2
-Error Handling
-The system is designed to handle invalid inputs gracefully, prompting the user to re-enter values where necessary.
-If the system encounters a problem reading from or writing to a file, appropriate error messages will be displayed.
-Future Enhancements
-Adding more detailed logging for operations.
-Implementing a graphical user interface (GUI) for enhanced user experience.
-Enhancing data persistence mechanisms.
-License
-This project is licensed under the MIT License. See the LICENSE file for more details.
+    Add stock:
 
-This README.md file provides a comprehensive overview of your project, guiding users through setup, usage, and features. Let me know if you need any modifications or additional details!
+    Enter Product ID to update: 3
+    Enter quantity to add: 10
+    Stock updated successfully.
+    ```
+
+- **Remove Stock**:
+  - Users can decrease the stock quantity of an existing product by specifying the product ID and the amount to remove.
+  - Example interaction:
+    ```sh
+    OPTIONS:
+    (1) Add a new product
+    (2) Remove a product
+    (3) Add stock
+    (4) Remove stock
+    (5) Back to main menu
+
+    Choose an option: 4
+
+    Remove stock:
+
+    Enter Product ID to update: 3
+    Enter quantity to remove: 2
+    Stock updated successfully.
+    ```
+
+- **View Current Inventory**:
+  - The current inventory, including all products, their prices, and stock quantities, is displayed to the user whenever they perform an inventory-related action.
+  - Example output:
+    ```sh
+    CURRENT INVENTORY (remember to save and quit!):
+    Product ID: 2, Name: Balloons, Price: $5.00, Stock Quantity: 20
+    Product ID: 3, Name: Pencil Case, Price: $7.00, Stock Quantity: 6
+    Product ID: 4, Name: Hairbrush, Price: $12.00, Stock Quantity: 15
+    Product ID: 5, Name: World's Best Grandpa Mug, Price: $14.00, Stock Quantity: 10
+    Product ID: 6, Name: City's Best Grandpa Mug, Price: $8.00, Stock Quantity: 20
+    ```
+
+### Order Management
+
+- **Create a New Order**:
+  - Users can create a new order by selecting products from the inventory and specifying quantities.
+  - Example interaction:
+    ```sh
+    CURRENT ORDERS (remember to save and quit!):
+    Order ID: 1, Total Price: $58.00, Status: Pending
+    Order ID: 2, Total Price: $20.00, Status: Pending
+    Order ID: 3, Total Price: $22.00, Status: Finalized
+    
+    OPTIONS:
+    (1) Create a new order
+    (2) Finalize an order
+    (3) Modify an existing order
+    (4) Back to main menu
+
+    Choose an option: 1
+
+    Create a new order:
+
+    CURRENT INVENTORY (remember to save and quit!):
+    Product ID: 2, Name: Balloons, Price: $5.00, Stock Quantity: 20
+    Product ID: 3, Name: Pencil Case, Price: $7.00, Stock Quantity: 6
+    Product ID: 4, Name: Hairbrush, Price: $12.00, Stock Quantity: 15
+
+    Enter Product ID: 2
+    Enter quantity: 10
+    Product added to order.
+    ```
+
+- **Modify an Existing Order**:
+  - Users can modify a pending order by adding or removing products or updating quantities. Orders can only be modified if they are still marked as "Pending."
+  - Example interaction:
+    ```sh
+    OPTIONS:
+    (1) Create a new order
+    (2) Finalize an order
+    (3) Modify an existing order
+    (4) Back to main menu
+
+    Choose an option: 3
+
+    Modify an existing order:
+
+    Enter Order ID to modify: 1
+
+    Order ID: 1
+    Status: Pending
+    Products in Order:
+    Product ID: 2, Quantity: 10
+    Total Price: $50.00
+    -----------------------------
+    MODIFY ORDER:
+    (1) Add a product
+    (2) Remove a product
+    (3) Change product quantity
+    (4) Finish modifying
+    ```
+
+- **Finalize an Order**:
+  - Users can finalize an order, which updates the inventory based on the products in the order and marks the order as "Finalized."
+  - Example interaction:
+    ```sh
+    OPTIONS:
+    (1) Create a new order
+    (2) Finalize an order
+    (3) Modify an existing order
+    (4) Back to main menu
+
+    Choose an option: 2
+
+    Finalize an order:
+
+    Enter Order ID to finalize: 3
+
+    Order finalized successfully.
+    ```
+
+- **View Current Orders**:
+  - The current list of orders, including their IDs, total prices, and statuses, is displayed to the user whenever they perform an order-related action.
+  - Example output:
+    ```sh
+    CURRENT ORDERS (remember to save and quit!):
+    Order ID: 1, Total Price: $58.00, Status: Pending
+    Order ID: 2, Total Price: $20.00, Status: Pending
+    Order ID: 3, Total Price: $22.00, Status: Finalized
+    ```
+
+## Setup and Usage
+
+### Prerequisites
+
+- Java Development Kit (JDK) 8 or higher
+- A text editor or Integrated Development Environment (IDE) like IntelliJ IDEA, Eclipse, or VS Code.
+
+### Running the Application
+
+1. **Compile the Project**:
+   - Open a terminal and navigate to the project directory.
+   - Compile the Java files:
+     ```sh
+     javac *.java
+     ```
+
+2. **Run the Application**:
+   - Execute the main class:
+     ```sh
+     java UserInterface
+     ```
+
+3. **Interact with the Application**:
+   - Follow the on-screen prompts to manage inventory and orders.
+
+### File Formats
+
+- **orders.txt**:
+  - Stores orders in the format: `orderId,totalPrice,status,(productId-quantity;productId-quantity;...)`
+  - Example: `1,58.0,Pending,(2-10;6-1)`
+
+- **inventory.txt**:
+  - Stores inventory in the format: `productId,name,price,stockQuantity`
+  - Example: `2,Balloons,5.0,20`
+
+## Error Handling
+
+- The system is designed to handle invalid inputs gracefully, prompting the user to re-enter values where necessary.
+- If the system encounters a problem reading from or writing to a file, appropriate error messages will be displayed.
+
+## Future Enhancements
+
+- Adding more detailed logging for operations.
+- Implementing a graphical user interface (GUI) for enhanced user experience.
+- Enhancing data persistence mechanisms.
